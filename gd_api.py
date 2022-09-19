@@ -28,6 +28,9 @@ def count(path):
     democracy = 'демократ'
 
     for root, dirs, files in os.walk(path, topdown=False):
+        if root[-1].isdigit():
+            f = open(root + '\\' + 'count.csv', 'w')
+            f.close()
         for file in files:
 
             if file[:-4] == '.csv':
