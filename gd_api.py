@@ -1,6 +1,9 @@
 import os
 import csv
 import requests
+import pandas as pd
+import matplotlib.pyplot as plt
+# import numpy as np
 from bs4 import BeautifulSoup
 
 
@@ -63,6 +66,31 @@ def count(path):
                 os.rename(root + '\\' + file, root + '\\' + 'archive\\' + file)
 
 
+def analyze(path):
+
+    df = pd.read_csv(path + '\\' + 'gd' + '\\' + '3' + '\\' + 'count.csv', delimiter=';', names=['Date', 'Count'])
+    df = df\
+        .replace('.января.', '/01/', regex=True)\
+        .replace('.февраля.', '/02/', regex=True)\
+        .replace('.марта.', '/03/', regex=True)\
+        .replace('.апреля.', '/04/', regex=True)\
+        .replace('.мая.', '/05/', regex=True)\
+        .replace('.июня.', '/06/', regex=True)\
+        .replace('.июля.', '/07/', regex=True)\
+        .replace('.августа.', '/08/', regex=True)\
+        .replace('.сентября.', '/09/', regex=True)\
+        .replace('.октября.', '/10/', regex=True)\
+        .replace('.ноября.', '/11/', regex=True)\
+        .replace('.декабря.', '/12/', regex=True)
+    df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
+    df.sort_values(by='Date', inplace=True)
+
+    fig, ax = plt.subplots()
+    agg_df = df.groupby([df['Date'].dt.year, df['Date'].dt.month]).agg('sum').plot(ax=ax)
+
+    plt.show()
+
+
 def main():
 
     basefolder = r'C:\Users\kobzaale\Desktop\diplom'
@@ -95,6 +123,8 @@ def main():
         count(basefolder)
     except FileNotFoundError:
         print('FileNotFoundError')
+
+    analyze(basefolder)
 
 
 if __name__ == '__main__':
