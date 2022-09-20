@@ -3,7 +3,6 @@ import csv
 import requests
 import pandas as pd
 import matplotlib.pyplot as plt
-# import numpy as np
 from bs4 import BeautifulSoup
 
 
@@ -84,9 +83,10 @@ def analyze(path):
         .replace('.декабря.', '/12/', regex=True)
     df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
     df.sort_values(by='Date', inplace=True)
+    agg_df = df.groupby([df['Date'].dt.year, df['Date'].dt.month]).agg('sum')
 
     fig, ax = plt.subplots()
-    agg_df = df.groupby([df['Date'].dt.year, df['Date'].dt.month]).agg('sum').plot(ax=ax)
+    agg_df.plot(ax=ax, title='3rd convocation', xlabel='Date', ylabel='Count', marker='.').grid(axis='both')
 
     plt.show()
 
