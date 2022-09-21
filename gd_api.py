@@ -2,6 +2,7 @@ import os
 import csv
 import requests
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
 
@@ -67,26 +68,72 @@ def count(path):
 
 def analyze(path):
 
-    df = pd.read_csv(path + '\\' + 'gd' + '\\' + '3' + '\\' + 'count.csv', delimiter=';', names=['Date', 'Count'])
-    df = df\
-        .replace('.января.', '/01/', regex=True)\
-        .replace('.февраля.', '/02/', regex=True)\
-        .replace('.марта.', '/03/', regex=True)\
-        .replace('.апреля.', '/04/', regex=True)\
-        .replace('.мая.', '/05/', regex=True)\
-        .replace('.июня.', '/06/', regex=True)\
-        .replace('.июля.', '/07/', regex=True)\
-        .replace('.августа.', '/08/', regex=True)\
-        .replace('.сентября.', '/09/', regex=True)\
-        .replace('.октября.', '/10/', regex=True)\
-        .replace('.ноября.', '/11/', regex=True)\
-        .replace('.декабря.', '/12/', regex=True)
-    df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
-    df.sort_values(by='Date', inplace=True)
-    agg_df = df.groupby([df['Date'].dt.year, df['Date'].dt.month]).agg('sum')
+    df_common = pd.DataFrame()
 
     fig, ax = plt.subplots()
-    agg_df.plot(ax=ax, title='3rd convocation', xlabel='Date', ylabel='Count', marker='.').grid(axis='both')
+
+    for convocation in range(3, 8):
+
+        df = pd.read_csv(path + '\\' + 'gd' + '\\' + str(convocation) + '\\' + 'count.csv',
+                         delimiter=';', names=['Date', 'Count'])
+        df = df \
+            .replace('.января.', '/01/', regex=True) \
+            .replace('.февраля.', '/02/', regex=True) \
+            .replace('.марта.', '/03/', regex=True) \
+            .replace('.апреля.', '/04/', regex=True) \
+            .replace('.мая.', '/05/', regex=True) \
+            .replace('.июня.', '/06/', regex=True) \
+            .replace('.июля.', '/07/', regex=True) \
+            .replace('.августа.', '/08/', regex=True) \
+            .replace('.сентября.', '/09/', regex=True) \
+            .replace('.октября.', '/10/', regex=True) \
+            .replace('.ноября.', '/11/', regex=True) \
+            .replace('.декабря.', '/12/', regex=True) \
+            .replace('г', '', regex=True)
+        df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
+        df.sort_values(by='Date', inplace=True)
+
+        year_df = df \
+            .groupby(df['Date'].dt.year) \
+            .sum()
+        year_df = year_df.reset_index()
+        df_common = df_common.append(year_df)
+
+        agg_df = df \
+            .groupby([df['Date'].dt.year, df['Date'].dt.month]) \
+            .sum()
+        agg_df.index.names = ['Year', 'Month']
+        agg_df = agg_df.reset_index()
+        agg_df['Period'] = agg_df['Year'].astype(str) + '-' + agg_df['Month'].astype(str)
+        agg_df = agg_df.drop(columns=['Year', 'Month'])
+
+        x = agg_df['Period']
+        y = agg_df['Count']
+        ax.plot(x, y, linewidth=2.0, marker='.')
+        fig.suptitle(f'{convocation} convocations', fontsize=20)
+        plt.xticks(rotation=90)
+        plt.ylabel('Count', fontsize=10)
+        plt.grid(True)
+
+        x_trend = np.array(x)
+        y_trend = np.array(y)
+        z = np.polyfit(x_trend, y_trend, 1)
+        p = np.poly1d(z)
+        plt.plot(x_trend, p(x_trend), "r--")
+
+    x = df_common['Date']
+    y = df_common['Count']
+    ax.plot(x, y, linewidth=2.0, marker='.')
+    fig.suptitle('3-7 convocations', fontsize=20)
+    plt.xticks(rotation=90)
+    plt.ylabel('Count', fontsize=10)
+    plt.grid(True)
+
+    x_trend = np.array(x)
+    y_trend = np.array(y)
+    z = np.polyfit(x_trend, y_trend, 1)
+    p = np.poly1d(z)
+    plt.plot(x_trend, p(x_trend), "r--")
 
     plt.show()
 
@@ -94,35 +141,35 @@ def analyze(path):
 def main():
 
     basefolder = r'C:\Users\kobzaale\Desktop\diplom'
-
-    # 18 января 2000 г. - 22 октября 2010 г.
-    nodes_reverse = range(2265, 43, -1)
-
-    # 01 ноября 2010 г. - 17 июня 2021 г.
-    nodes = range(3332, 3341)
-
-    try:
-        api(nodes_reverse, basefolder)
-        api(nodes, basefolder)
-    except ConnectionError:
-        print('ConnectionError')
-    except AttributeError:
-        print('AttributeError')
-
     #
-    # Manually sort txt files by convocations. Then run code below
+    # # 18 января 2000 г. - 22 октября 2010 г.
+    # nodes_reverse = range(2265, 43, -1)
     #
-    # 3rd convocation: 2000 - 2003
-    # 4th convocation: 2004 - 2007
-    # 5th convocation: 2008 - 2011
-    # 6th convocation: 2012 - 2016
-    # 7th convocation: 2017 - 2021
+    # # 01 ноября 2010 г. - 17 июня 2021 г.
+    # nodes = range(3332, 3341)
     #
-
-    try:
-        count(basefolder)
-    except FileNotFoundError:
-        print('FileNotFoundError')
+    # try:
+    #     api(nodes_reverse, basefolder)
+    #     api(nodes, basefolder)
+    # except ConnectionError:
+    #     print('ConnectionError')
+    # except AttributeError:
+    #     print('AttributeError')
+    #
+    # #
+    # # Manually sort txt files by convocations. Then run code below
+    # #
+    # # 3rd convocation: 2000 - 2003
+    # # 4th convocation: 2004 - 2007
+    # # 5th convocation: 2008 - 2011
+    # # 6th convocation: 2012 - 2016
+    # # 7th convocation: 2017 - 2021
+    # #
+    #
+    # try:
+    #     count(basefolder)
+    # except FileNotFoundError:
+    #     print('FileNotFoundError')
 
     analyze(basefolder)
 
