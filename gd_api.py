@@ -115,7 +115,7 @@ def analyze(path):
         plt.ylabel('Count', fontsize=10)
         plt.grid(True)
 
-        x_trend = np.array(x)
+        x_trend = np.array(range(len(x)))
         y_trend = np.array(y)
         z = np.polyfit(x_trend, y_trend, 1)
         p = np.poly1d(z)
@@ -124,6 +124,8 @@ def analyze(path):
     x = df_common['Date']
     y = df_common['Count']
     ax.plot(x, y, linewidth=2.0, marker='.')
+    # ax.set_facecolor('yellow')
+    # ax.patch.set_alpha(0.2)
     fig.suptitle('3-7 convocations', fontsize=20)
     plt.xticks(rotation=90)
     plt.ylabel('Count', fontsize=10)
@@ -136,6 +138,48 @@ def analyze(path):
     plt.plot(x_trend, p(x_trend), "r--")
 
     plt.show()
+
+
+def izvestia(path):
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36 '
+    }
+
+    c = 1
+    for i in range(408):
+        url = f'https://iz.ru/search?type=2&prd=3&from={str(i)}0&text=%D0%B4%D0%B5%D0%BC%D0%BE%D0%BA%D1%80%D0%B0%D1%82%D0%B8%D1%8F&date_from=2000-01-01&date_to=2011-04-16&sort=0'
+        response = requests.get(url, headers=headers)
+        html = response.text
+        parsed_html = BeautifulSoup(html, 'lxml')
+        articles = parsed_html.body.findAll('div', attrs={'class': 'view-search__title'})
+        for article in articles:
+            tag = article.find('a')
+            article_url = tag.get('href')
+            article_response = requests.get(article_url, headers=headers)
+            article_html = article_response.text
+            article_parsed_html = BeautifulSoup(article_html, 'lxml')
+            try:
+                article_title = article_parsed_html.body.find('div', attrs={'itemprop': 'name'}).text
+                header_list = article_title.split()
+                header = ' '.join(header_list)
+                article_date = article_parsed_html.body.find('div', attrs={'itemprop': 'datePublished'}).text
+                article_description_html = article_parsed_html.body.find('div', attrs={'class': 'text-article__inside'})
+                tag = article_description_html.find('div')
+                article_text = tag.find('div').text
+
+                with open(path + '\\' + 'smi' + '\\' + 'izvestia' + '\\' + str(c) + '.txt', 'w', encoding='utf8') as file:
+                    file.write(article_url)
+                    file.write('\n')
+                    file.write(header)
+                    file.write('\n')
+                    file.write(article_date)
+                    file.write('\n')
+                    file.write(article_text)
+            except AttributeError:
+                continue
+
+        c += 1
 
 
 def main():
@@ -171,7 +215,9 @@ def main():
     # except FileNotFoundError:
     #     print('FileNotFoundError')
 
-    analyze(basefolder)
+    # analyze(basefolder)
+
+    izvestia(basefolder)
 
 
 if __name__ == '__main__':
