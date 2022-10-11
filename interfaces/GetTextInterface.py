@@ -4,7 +4,7 @@ from abc import abstractmethod
 class GetTextInterface:
 
     @abstractmethod
-    def api_get(self, url, headers) -> str:
+    def api_get(self, url) -> str:
         pass
 
     @abstractmethod
