@@ -1,26 +1,32 @@
 # This Python file uses the following encoding: utf-8
 
 import os
-from API import *
-from SQL import *
+from texts.help.API import *
+from sql.SQL import *
 from itertools import chain
 
 
-class GosDuma(API, SQL):
-    def __init__(self):
-        super().__init__('http://transcript.duma.gov.ru/node/', '')
+class GosDuma(API):
+    
+    __URL = 'http://transcript.duma.gov.ru/node/'
+    __HEADERS = ''
 
-    @SQL.connect
-    def api_get(self):
+    def __init__(self):
+        super().__init__(GosDuma.__URL, GosDuma.__HEADERS)
+
+    def __call__(self):
+        GosDuma._api_get(self)
+
+    def _api_get(self):
         # 18 января 2000 г. - 22 октября 2010 г.
-        nodes_reverse = range(2265, 43, -1)
+        nodes_reverse = range(407, 43, -1)
 
         # 01 ноября 2010 г. - 17 июня 2021 г.
         nodes_straight = range(3332, 5686)
 
         nodes = chain(nodes_reverse, nodes_straight)
-        url = str(super().url)
-        headers = str(super().headers)
+        url = self.__URL
+        headers = self.__HEADERS
         for node in nodes:
             try:
                 url_full = f'{url}{str(node)}/'
@@ -28,11 +34,11 @@ class GosDuma(API, SQL):
                 self.parse_html(parsed_html, url_full)
             except Exception as e:
                 with open(os.getcwd() + r'\\' + 'errors.txt', 'a') as txt:
-                    txt.write(str(node) + '\t' + e.__str__() + '\n')
+                    txt.write(str(node) + '\t' + str(e) + '\n')
 
     @staticmethod
+    @SQL.connect
     def parse_html(parsed_html, url):
-        # header = parsed_html.body.find('div', attrs={'class': 'header-bord'}).text.replace('\n', ' ')
         header = parsed_html.find('div', attrs={'class': 'header-bord'}).text.replace('\n', ' ')
         header_list = header.split()
         if header_list[0] == 'Стенограмма':

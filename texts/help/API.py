@@ -18,7 +18,7 @@ class API:
         return self._headers
 
     @staticmethod
-    def _api_get(url=url.__str__(), headers=headers.__str__()) -> BeautifulSoup:
+    def _api_get(url=str(url), headers=headers) -> BeautifulSoup:
         try:
             response = get(url, headers=headers)
             html = response.text

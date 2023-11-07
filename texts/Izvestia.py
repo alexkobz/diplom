@@ -1,11 +1,12 @@
 # This Python file uses the following encoding: utf-8
 
 import os
-from API import *
-from SQL import *
+from texts.help.API import *
+from sql.SQL import *
 
 
-class Izvestia(API, SQL):
+class Izvestia(API):
+    
     def __init__(self, url=None, headers=None):
         if url is None:
             url = 'https://iz.ru/search?type=2&prd=3&from=0&text=%D0%B4%D0%B5%D0%BC%D0%BE%D0%BA%D1%80%D0%B0%D1%82%D0%B8%D1%8F&date_from=2000-01-01&date_to=2005-04-19&sort=0'
@@ -16,7 +17,9 @@ class Izvestia(API, SQL):
         self.url = url
         self.headers = headers
 
-    @SQL.connect
+    def __call__(self):
+        Izvestia._api_get(self)
+
     def _api_get(self):
         url = self.url
         headers = self.headers
@@ -34,6 +37,7 @@ class Izvestia(API, SQL):
                     txt.write(str(node) + '\t' + e.__str__() + '\n')
 
     @staticmethod
+    @SQL.connect
     def parse_html(parsed_html, headers):
         links = [link.a.get('href') for link in parsed_html.find_all('div', attrs={'class': 'view-search__title'})]
         dates = [date.string for date in parsed_html.find_all('div', attrs={'class': 'view-search__date'})]
@@ -60,9 +64,11 @@ class Izvestia(API, SQL):
     @property
     def url(self):
         return self._url
+    
     @url.setter
     def url(self, value='https://iz.ru/search?type=2&prd=0&from=0&text=%D0%B4%D0%B5%D0%BC%D0%BE%D0%BA%D1%80%D0%B0%D1%82%D0%B8%D1%8F&date_from=2000-01-01&date_to=2021-09-16&sort=0'):
         self._url = value
+        
     @property
     def headers(self):
         return self._headers

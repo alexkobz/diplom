@@ -4,6 +4,7 @@ import sqlite3
 
 
 class SQL:
+    
     __CONNECTION = sqlite3.Connection('')
     c = 1
 
