@@ -6,12 +6,19 @@ from time import sleep
 
 class Media:
 
-    def __init__(self, base_url, user_agent, basefolder, timeout):
-        self._base_url = base_url
+    def __init__(self, url, user_agent, basefolder, timeout):
+        self._url = url
         self._user_agent = user_agent
         self._basefolder = basefolder
         self._timeout = timeout
-        self._url = None
+
+    @property
+    def basefolder(self):
+        return self._basefolder
+
+    @basefolder.setter
+    def basefolder(self, basefolder):
+        self._basefolder = basefolder
 
     def get_pages(self, url, file_count):
         RequestProcessing(url, self._user_agent, self._basefolder, file_count)
