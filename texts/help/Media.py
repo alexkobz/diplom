@@ -2,15 +2,17 @@ import os
 from texts.help.KnownUrls import KnownUrls
 from texts.help.RequestProcessing import RequestProcessing
 from time import sleep
+import re
 
 
 class Media:
 
-    def __init__(self, url, user_agent, basefolder, timeout):
+    def __init__(self, url, user_agent, basefolder, timeout, pattern):
         self._url = url
         self._user_agent = user_agent
         self._basefolder = basefolder
         self._timeout = timeout
+        self._pattern = pattern
 
     @property
     def basefolder(self):
@@ -24,7 +26,18 @@ class Media:
         RequestProcessing(url, self._user_agent, self._basefolder, file_count)
 
     def get_known_urls(self):
-        return KnownUrls(self._url, self._user_agent).get_urls()
+        pattern = re.compile(self._pattern)
+        urls = []
+        known_urls = KnownUrls(self._url, self._user_agent).get_urls()
+        for i in known_urls:
+            if not re.search(pattern, i):
+                continue
+            urls.append(i)
+            sleep(0.005)
+        with open(f'{self._basefolder}/urls.txt', 'w') as f:
+            f.writelines(urls)
+        return (url for url in urls)
+
 
     def mkdir(self):
         try:
