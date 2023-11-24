@@ -1,3 +1,4 @@
+import asyncio
 from texts.help.Media import Media
 from time import sleep
 from waybackpy import WaybackMachineCDXServerAPI
@@ -5,7 +6,7 @@ from waybackpy import WaybackMachineCDXServerAPI
 
 class Echo(Media):
 
-    def __call__(self) -> None:
+    async def __call__(self) -> None:
         self.mkdir()
         known_urls = self.get_known_urls()
 
