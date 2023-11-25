@@ -2,7 +2,9 @@ import asyncio
 import aiohttp
 from enum import Enum
 from time import time, gmtime, strftime
+import sys
 import logging
+import const.const as const
 
 
 class RequestResult(Enum):
@@ -13,9 +15,11 @@ class RequestResult(Enum):
 
 class RequestProcessing:
 
-    def __init__(self, url, user_agent, path, file_count):
+    user_agent = const.USER_AGENT
+
+
+    def __init__(self, url, path, file_count):
         self._url = url
-        self._user_agent = user_agent
         self._path = path
         self._file_count = file_count
 
@@ -27,16 +31,17 @@ class RequestProcessing:
                     return html
                 return None
 
+    @log
     async def write(self, response):
         try:
             with open(f'{self._path}/{self._file_count}.html', 'wb+') as f:
                 f.write(response.content)
-        except Exception as e:
+        except:
             with open(f'{self._path}/err.txt', 'a+') as f:
-                f.write(response.txt)
+                f.write(response.content)
                 f.write('\n\n\n')
 
-    def __call__(self, *args, **kwargs):
+    async def __call__(self, *args, **kwargs):
         html = await self.get()
         await asyncio.sleep(0.5)
         if html:

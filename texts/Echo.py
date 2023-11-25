@@ -1,10 +1,12 @@
-import asyncio
 from texts.help.Media import Media
 from time import sleep
 from waybackpy import WaybackMachineCDXServerAPI
+import const.const as const
 
 
 class Echo(Media):
+
+    user_agent = const.USER_AGENT
 
     async def __call__(self) -> None:
         self.mkdir()
@@ -12,7 +14,7 @@ class Echo(Media):
 
         file_count = 1
         for url in known_urls:
-            save_api = WaybackMachineCDXServerAPI(url, self._user_agent)
+            save_api = WaybackMachineCDXServerAPI(url, user_agent=Echo.user_agent)
             archive_url = save_api.newest().archive_url
             try:
                 self.get_pages(archive_url, file_count)

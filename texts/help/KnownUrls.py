@@ -1,11 +1,13 @@
 import waybackpy
+import const.const as const
 
 
 class KnownUrls:
 
-    def __init__(self, url, user_agent):
+    user_agent = const.USER_AGENT
+
+    def __init__(self, url):
         self.url = url
-        self.user_agent = user_agent
-    
+
     def get_urls(self):
-        return waybackpy.Url(url=self.url, user_agent=self.user_agent).known_urls(subdomain=False)  # alive and subdomain are optional.
+        return waybackpy.Url(url=self.url, user_agent=KnownUrls.user_agent).known_urls(subdomain=False)  # alive and subdomain are optional.
