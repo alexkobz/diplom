@@ -25,20 +25,21 @@ class RequestProcessing:
 
     async def get(self):
         async with aiohttp.ClientSession() as session:
-            async with session.get(self._url) as response:
+            async with session.get(self._url, headers=RequestProcessing.user_agent) as response:
                 html = await response.content.read()
                 if str(response.status)[0] != RequestResult.OK.value:
-                    return html
-                return None
+                    return None
+                return html
 
-    @log
+    # @log
     async def write(self, response):
         try:
             with open(f'{self._path}/{self._file_count}.html', 'wb+') as f:
-                f.write(response.content)
-        except:
+                f.write(response)
+        except Exception as e:
+            print(e)
             with open(f'{self._path}/err.txt', 'a+') as f:
-                f.write(response.content)
+                f.write(response)
                 f.write('\n\n\n')
 
     async def __call__(self, *args, **kwargs):

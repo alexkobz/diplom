@@ -10,8 +10,8 @@ from texts.MK import MK
 import const.const as const
 
 
-def main():
-    
+async def main():
+
     izvestia = Izvestia(const.IZVESTIA.url, const.IZVESTIA.basefolder, const.IZVESTIA.timeout, const.IZVESTIA.pattern)
     kommersant = Kommersant(const.KOMMERSANT.url, const.KOMMERSANT.basefolder, const.KOMMERSANT.timeout, const.KOMMERSANT.pattern)
     vedomosti_politics = Vedomosti(const.VEDOMOSTI_POLITICS.url, const.VEDOMOSTI_POLITICS.basefolder, const.VEDOMOSTI_POLITICS.timeout, const.VEDOMOSTI_POLITICS.pattern)
@@ -30,15 +30,20 @@ def main():
     zavtra.save_urls()
     mk.save_urls()
 
-    await asyncio.create_task(izvestia())
-    await asyncio.create_task(kommersant())
-    await asyncio.create_task(vedomosti_politics())
-    await asyncio.create_task(vedomosti_opinion())
-    await asyncio.create_task(echo())
-    await asyncio.create_task(ng())
-    await asyncio.create_task(zavtra())
-    await asyncio.create_task(mk())
+    izvestia_task = asyncio.create_task(izvestia())
+    kommersant_task = asyncio.create_task(kommersant())
+    vedomosti_task = asyncio.create_task(vedomosti_politics())
+    ng_task = asyncio.create_task(ng())
+    zavtra_task = asyncio.create_task(zavtra())
+    mk_task = asyncio.create_task(mk())
+    await izvestia_task
+    await kommersant_task
+    await vedomosti_task
+    await ng_task
+    await zavtra_task
+    await mk_task
 
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())
+
