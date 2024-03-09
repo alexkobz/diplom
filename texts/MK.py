@@ -1,5 +1,5 @@
-from texts.help.Media import Media
+from texts.help.API import API
 
 
-class MK(Media):
+class MK(API):
     pass

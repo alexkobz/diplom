@@ -1,5 +1,5 @@
-from texts.help.Media import Media
+from texts.help.API import API
 
 
-class NG(Media):
+class NG(API):
     pass

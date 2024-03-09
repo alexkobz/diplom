@@ -1,22 +1,11 @@
 import asyncio
 import aiohttp
-from enum import Enum
-from time import time, gmtime, strftime
-import sys
-import logging
 import const.const as const
-
-
-class RequestResult(Enum):
-    OK = '2'
-    WRONG = '3'
-    NOT_FOUND = '4'
 
 
 class RequestProcessing:
 
     user_agent = const.USER_AGENT
-
 
     def __init__(self, url, path, file_count):
         self._url = url
@@ -27,9 +16,9 @@ class RequestProcessing:
         async with aiohttp.ClientSession() as session:
             async with session.get(self._url, headers=RequestProcessing.user_agent) as response:
                 html = await response.content.read()
-                if str(response.status)[0] != RequestResult.OK.value:
-                    return None
-                return html
+                if response.ok:
+                    return html
+                return None
 
     # @log
     async def write(self, response):

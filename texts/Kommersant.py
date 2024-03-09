@@ -1,10 +1,10 @@
-from texts.help.Media import Media
+from texts.help.API import API
 from time import sleep
 import re
 import os
 
 
-class Kommersant(Media):
+class Kommersant(API):
     pass
     # def get_known_urls(self):
     #

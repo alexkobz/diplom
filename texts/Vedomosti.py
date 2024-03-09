@@ -1,7 +1,7 @@
-from texts.help.Media import Media
+from texts.help.API import API
 
 
-class Vedomosti(Media):
+class Vedomosti(API):
     pass
 
     # def get_known_urls(self):

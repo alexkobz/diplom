@@ -1,5 +1,5 @@
-from texts.help.Media import Media
+from texts.help.API import API
 
 
-class Zavtra(Media):
+class Zavtra(API):
     pass

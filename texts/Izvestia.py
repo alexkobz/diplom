@@ -1,10 +1,10 @@
 # This Python file uses the following encoding: utf-8
 
-from texts.help.Media import Media
+from texts.help.API import API
 import os
 
 
-class Izvestia(Media):
+class Izvestia(API):
     pass
     # def get_known_urls(self):
     #     os.chdir(path=r'D:\diplom main')

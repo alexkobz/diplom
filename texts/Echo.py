@@ -1,10 +1,10 @@
-from texts.help.Media import Media
+from texts.help.API import API
 from time import sleep
 from waybackpy import WaybackMachineCDXServerAPI
 import const.const as const
 
 
-class Echo(Media):
+class Echo(API):
 
     user_agent = const.USER_AGENT
 

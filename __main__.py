@@ -7,20 +7,19 @@ from texts.Echo import Echo
 from texts.NG import NG
 from texts.Zavtra import Zavtra
 from texts.MK import MK
-import const.const as const
 
 
 async def main():
 
-    izvestia = Izvestia(const.IZVESTIA.url, const.IZVESTIA.basefolder, const.IZVESTIA.timeout)
-    kommersant = Kommersant(const.KOMMERSANT.url, const.KOMMERSANT.basefolder, const.KOMMERSANT.timeout)
-    vedomosti_politics = Vedomosti(const.VEDOMOSTI_POLITICS.url, const.VEDOMOSTI_POLITICS.basefolder, const.VEDOMOSTI_POLITICS.timeout)
-    vedomosti_opinion = Vedomosti(const.VEDOMOSTI_OPINION.url, const.VEDOMOSTI_OPINION.basefolder, const.VEDOMOSTI_OPINION.timeout)
-    echo = Echo(const.ECHO.url, const.ECHO.basefolder, const.ECHO.timeout)
-    ng = NG(const.NG.url, const.NG.basefolder, const.NG.timeout)
-    zavtra = Zavtra(const.ZAVTRA.url, const.ZAVTRA.basefolder, const.ZAVTRA.timeout)
-    mk = MK(const.MK.url, const.MK.basefolder, const.MK.timeout)
-
+    izvestia = Izvestia("https://iz.ru/")
+    kommersant = Kommersant("https://www.kommersant.ru/doc/")
+    vedomosti_politics = Vedomosti("https://www.vedomosti.ru/politics/articles/")
+    vedomosti_opinion = Vedomosti("https://www.vedomosti.ru/opinion/articles/")
+    echo = Echo("https://echo.msk.ru/personalno/")
+    ng = NG("https://ng.ru/politics/")
+    zavtra = Zavtra("https://zavtra.ru/blogs/")
+    mk = MK("https://www.mk.ru/politics/")
+    gosduma = GosDuma()
     izvestia.save_urls()
     kommersant.save_urls()
     vedomosti_politics.save_urls()
