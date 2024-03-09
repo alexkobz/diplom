@@ -12,14 +12,14 @@ import const.const as const
 
 async def main():
 
-    izvestia = Izvestia(const.IZVESTIA.url, const.IZVESTIA.basefolder, const.IZVESTIA.timeout, const.IZVESTIA.pattern)
-    kommersant = Kommersant(const.KOMMERSANT.url, const.KOMMERSANT.basefolder, const.KOMMERSANT.timeout, const.KOMMERSANT.pattern)
-    vedomosti_politics = Vedomosti(const.VEDOMOSTI_POLITICS.url, const.VEDOMOSTI_POLITICS.basefolder, const.VEDOMOSTI_POLITICS.timeout, const.VEDOMOSTI_POLITICS.pattern)
-    vedomosti_opinion = Vedomosti(const.VEDOMOSTI_OPINION.url, const.VEDOMOSTI_OPINION.basefolder, const.VEDOMOSTI_OPINION.timeout, const.VEDOMOSTI_OPINION.pattern)
-    echo = Echo(const.ECHO.url, const.ECHO.basefolder, const.ECHO.timeout, const.ECHO.pattern)
-    ng = NG(const.NG.url, const.NG.basefolder, const.NG.timeout, const.NG.pattern)
-    zavtra = Zavtra(const.ZAVTRA.url, const.ZAVTRA.basefolder, const.ZAVTRA.timeout, const.ZAVTRA.pattern)
-    mk = MK(const.MK.url, const.MK.basefolder, const.MK.timeout, const.MK.pattern)
+    izvestia = Izvestia(const.IZVESTIA.url, const.IZVESTIA.basefolder, const.IZVESTIA.timeout)
+    kommersant = Kommersant(const.KOMMERSANT.url, const.KOMMERSANT.basefolder, const.KOMMERSANT.timeout)
+    vedomosti_politics = Vedomosti(const.VEDOMOSTI_POLITICS.url, const.VEDOMOSTI_POLITICS.basefolder, const.VEDOMOSTI_POLITICS.timeout)
+    vedomosti_opinion = Vedomosti(const.VEDOMOSTI_OPINION.url, const.VEDOMOSTI_OPINION.basefolder, const.VEDOMOSTI_OPINION.timeout)
+    echo = Echo(const.ECHO.url, const.ECHO.basefolder, const.ECHO.timeout)
+    ng = NG(const.NG.url, const.NG.basefolder, const.NG.timeout)
+    zavtra = Zavtra(const.ZAVTRA.url, const.ZAVTRA.basefolder, const.ZAVTRA.timeout)
+    mk = MK(const.MK.url, const.MK.basefolder, const.MK.timeout)
 
     izvestia.save_urls()
     kommersant.save_urls()
