@@ -2,4 +2,6 @@
 .git
 .idea
 venv
+/web_pages
 Dockerfile
+.gitignore

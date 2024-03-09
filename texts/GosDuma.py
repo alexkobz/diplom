@@ -8,12 +8,9 @@ from time import sleep
 
 
 class GosDuma(API):
-    
-    __URL = 'http://transcript.duma.gov.ru/node/'
-    __HEADERS = USER_AGENT
 
     def __call__(self):
-        os.chdir(path=r'E:\diplom\web pages')
+        os.chdir(path=r'./web pages')
         GosDuma._api_get(self)
 
 

@@ -19,7 +19,8 @@ async def main():
     ng = NG("https://ng.ru/politics/")
     zavtra = Zavtra("https://zavtra.ru/blogs/")
     mk = MK("https://www.mk.ru/politics/")
-    gosduma = GosDuma()
+    gosduma = GosDuma('http://transcript.duma.gov.ru/node/')
+
     izvestia.save_urls()
     kommersant.save_urls()
     vedomosti_politics.save_urls()
@@ -28,6 +29,7 @@ async def main():
     ng.save_urls()
     zavtra.save_urls()
     mk.save_urls()
+    gosduma.save_urls()
 
     izvestia_task = asyncio.create_task(izvestia())
     kommersant_task = asyncio.create_task(kommersant())
@@ -35,12 +37,15 @@ async def main():
     ng_task = asyncio.create_task(ng())
     zavtra_task = asyncio.create_task(zavtra())
     mk_task = asyncio.create_task(mk())
+    gosduma_task = gosduma.create_task(gosduma())
+
     await izvestia_task
     await kommersant_task
     await vedomosti_task
     await ng_task
     await zavtra_task
     await mk_task
+    await gosduma_task
 
 
 if __name__ == '__main__':

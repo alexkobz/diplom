@@ -16,7 +16,6 @@ class API:
         await rp()
 
     def mkdir(self):
-        os.chdir(path=r'D:\diplom main')
         try:
             os.mkdir(self._basefolder)
         except FileExistsError:
@@ -37,7 +36,7 @@ class API:
                 yield url
 
     async def __call__(self) -> None:
-        os.chdir(path=r'E:\diplom\web pages')
+        os.chdir(path=r'./web pages')
         known_urls = self.get_known_urls()
         file_count = 1
         for url in known_urls:
@@ -45,4 +44,4 @@ class API:
                 await self.get_pages(url.replace('\n', '').replace('%20', ''), file_count)
                 file_count += 1
             except Exception as e:
-                await asyncio.sleep(self._timeout + 1)
+                await asyncio.sleep(60)
