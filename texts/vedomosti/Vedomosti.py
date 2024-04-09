@@ -1,4 +1,4 @@
-from texts.help.API import API
+from texts.API import API
 
 
 class Vedomosti(API):

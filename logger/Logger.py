@@ -8,7 +8,7 @@ class Logger(logging.Logger):
     """
     _instance: logging.Logger = None
 
-    def __new__(cls, func):
+    def __new__(cls, **kwargs):
         if cls._instance is not None:
             return cls._instance
         else:

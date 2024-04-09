@@ -1,15 +1,16 @@
 import os
-from texts.help.KnownUrls import KnownUrls
-from texts.help.RequestProcessing import RequestProcessing
+from texts.KnownUrls import KnownUrls
+from texts.RequestProcessing import RequestProcessing
 from time import sleep
 import asyncio
+from abc import ABC, abstractmethod
 
 
-class API:
+class API(ABC):
 
     def __init__(self, url):
         self._url = url
-        self._basefolder = self.__class__.__name__.lower()
+        self._basefolder = "texts/" + self.__class__.__name__.lower()
 
     async def get_pages(self, url, file_count):
         rp = RequestProcessing(url, self._basefolder, file_count)
@@ -43,5 +44,14 @@ class API:
             try:
                 await self.get_pages(url.replace('\n', '').replace('%20', ''), file_count)
                 file_count += 1
-            except Exception as e:
+            except:
                 await asyncio.sleep(60)
+
+    def filename(self):
+        for _, _, files in os.walk(self._basefolder):
+            for file in files:
+                yield file
+
+    @abstractmethod
+    def parse_html(self):
+        pass

@@ -1,4 +1,4 @@
-from texts.help.API import API
+from texts.API import API
 from time import sleep
 from waybackpy import WaybackMachineCDXServerAPI
 import const.const as const

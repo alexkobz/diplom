@@ -3,4 +3,16 @@
 /__pycache__
 /venv
 /web_pages
+/texts/gosduma/.ipynb_checkpoints
+/texts/gosduma/medvedev
+/texts/gosduma/putin1
+/texts/gosduma/putin2
+/texts/gosduma/sovereign
+/texts/echo/.ipynb_checkpoints
+/texts/izvestia/.ipynb_checkpoints
+/texts/kommersant/.ipynb_checkpoints
+/texts/mk/.ipynb_checkpoints
+/texts/ng/.ipynb_checkpoints
+/texts/vedomosti/.ipynb_checkpoints
+/texts/zavtra/.ipynb_checkpoints
 diplom.db

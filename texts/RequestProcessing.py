@@ -1,7 +1,9 @@
 import asyncio
 import aiohttp
 import const.const as const
+from logger.Logger import Logger
 
+logger = Logger()
 
 class RequestProcessing:
 
@@ -20,13 +22,11 @@ class RequestProcessing:
                     return html
                 return None
 
-    # @log
     async def write(self, response):
         try:
             with open(f'{self._path}/{self._file_count}.html', 'wb+') as f:
                 f.write(response)
         except Exception as e:
-            print(e)
             with open(f'{self._path}/err.txt', 'a+') as f:
                 f.write(response)
                 f.write('\n\n\n')
