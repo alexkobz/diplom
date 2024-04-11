@@ -1,16 +1,21 @@
+#!/usr/bin/env python
+# This Python file uses the following encoding: utf-8
 import os
+import asyncio
+import pandas as pd
+from time import sleep
+from abc import ABC, abstractmethod
 from texts.KnownUrls import KnownUrls
 from texts.RequestProcessing import RequestProcessing
-from time import sleep
-import asyncio
-from abc import ABC, abstractmethod
+from sql.SQL import SQL
+from texts.text_cleaner import text_cleaner
 
 
 class API(ABC):
 
     def __init__(self, url):
         self._url = url
-        self._basefolder = "texts/" + self.__class__.__name__.lower()
+        self._basefolder = "./texts/" + self.__class__.__name__.lower()
 
     async def get_pages(self, url, file_count):
         rp = RequestProcessing(url, self._basefolder, file_count)
@@ -53,5 +58,18 @@ class API(ABC):
                 yield file
 
     @abstractmethod
-    def parse_html(self):
+    def parse_html(self, sql: SQL):
         pass
+
+    def clean_text(self, sql):
+        prefix = self._basefolder.upper()
+        res = sql.execute(f"""SELECT * FROM {prefix}_TRANSCRIPTS;""")
+        for row in res:
+            i, author, date, url, header, section, text = row
+            date = pd.to_datetime(date)
+            clean_text = text_cleaner(text)
+            democracy_count = clean_text.count('демократия')
+            sql.execute(
+                f"""INSERT INTO {prefix}_CLEANTEXTS (DDATE, URL, TRANSCRIPT, CLEAN_TEXT, DEMOCRACY_COUNT) 
+                VALUES('{date}', '{url}', '{text}', '{clean_text}', '{democracy_count}');"""
+            )

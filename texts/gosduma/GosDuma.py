@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # This Python file uses the following encoding: utf-8
 import asyncio
 import os
@@ -31,7 +32,7 @@ class GosDuma(API):
             except:
                 await asyncio.sleep(60)
 
-    def parse_html(self):
+    def parse_html(self, sql: SQL):
         for file in self.filename():
             with open(file, encoding='utf-8') as f:
                 try:
@@ -41,7 +42,7 @@ class GosDuma(API):
                     header = soup.find('head').find('title').text.replace("'", "`")
                     text = "\n".join([str(i).replace('<p>', '').replace('</p>', '').replace("'", "`")
                                       for i in soup.find(id='selectable-content').findAll('p')])
-                    SQL.execute(
+                    sql.execute(
                         f"""INSERT INTO GD_TRANSCRIPTS (HEADER, URL, TRANSCRIPT)
                         VALUES('{header}','{url}', '{text}')"""
                     )

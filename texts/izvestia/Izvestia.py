@@ -1,12 +1,12 @@
+#!/usr/bin/env python
 # This Python file uses the following encoding: utf-8
 from bs4 import BeautifulSoup
-from sql.SQL import SQL
 from texts.API import API
 
 
 class Izvestia(API):
 
-    def parse_html(self):
+    def parse_html(self, sql):
         for file in self.filename():
             with open(file, encoding='utf-8') as f:
                 try:
@@ -36,7 +36,7 @@ class Izvestia(API):
                     for i in soup.findAll(itemprop="articleBody"):
                         text += i.text.strip().replace("'", '.') + '\n'
 
-                    SQL.execute(
+                    sql.execute(
                         f"""INSERT INTO IZVESTIA_TRANSCRIPTS_NEW (AUTHOR, DDATE, URL, HEADER, SECTION, FILENAME, TRANSCRIPT) 
                         VALUES('{author}', '{date}', '{url}', '{header}', '{section}', '{file}', '{text}');"""
                     )

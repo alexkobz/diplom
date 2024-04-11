@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# This Python file uses the following encoding: utf-8
+from bs4 import BeautifulSoup
+from sql.SQL import SQL
 from texts.API import API
 from time import sleep
 from waybackpy import WaybackMachineCDXServerAPI
@@ -20,3 +24,16 @@ class Echo(API):
                 sleep(0.1)
             except:
                 sleep(60)
+
+    def parse_html(self, sql: SQL):
+        for file in self.filename():
+            with open(file, encoding='utf-8') as f:
+                try:
+                    html = f.read()
+                    soup = BeautifulSoup(html)
+                    sql.execute("""SELECT 1;"""
+                        # f"""INSERT INTO ECHO_TRANSCRIPTS (HEADER, URL, TRANSCRIPT)
+                        # VALUES('{header}','{url}', '{text}')"""
+                    )
+                except:
+                    pass

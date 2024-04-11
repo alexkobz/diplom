@@ -1,5 +1,7 @@
 import asyncio
 import aiohttp
+#!/usr/bin/env python
+# This Python file uses the following encoding: utf-8
 import const.const as const
 from logger.Logger import Logger
 

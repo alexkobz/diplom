@@ -27,3 +27,7 @@ class SQL:
     @staticmethod
     def execute(statement: str):
         SQL.__cursor.execute(statement)
+
+    @staticmethod
+    def select(statement: str):
+        SQL.__cursor.execute(statement)
