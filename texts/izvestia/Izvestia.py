@@ -37,8 +37,14 @@ class Izvestia(API):
                         text += i.text.strip().replace("'", '.') + '\n'
 
                     sql.execute(
-                        f"""INSERT INTO IZVESTIA_TRANSCRIPTS_NEW (AUTHOR, DDATE, URL, HEADER, SECTION, FILENAME, TRANSCRIPT) 
-                        VALUES('{author}', '{date}', '{url}', '{header}', '{section}', '{file}', '{text}');"""
+                        f"""INSERT INTO TRANSCRIPTS 
+                        (AUTHOR, DDATE, URL, HEADER, SECTION, FILENAME, TRANSCRIPT, SOURCE) 
+                        VALUES('{author}', '{date}', '{url}', '{header}', '{section}', '{file}', '{text}', '{3}');"""
                     )
                 except:
                     pass
+
+    def cast_date(self, sql):
+        df = pd.read_sql("SELECT * FROM TRANSCRIPTS WHERE SOURCE = 3", sql.__CONNECTION)
+        df["DDATE"] = pd.to_datetime(df["DDATE"]).dt.tz_localize(None)
+        return df

@@ -21,8 +21,14 @@ class Zavtra(API):
                     for i in soup.findAll(class_="article__content"):
                         text += i.text.strip() + '\n'
                     sql.execute(
-                        f"""INSERT INTO ZAVTRA_TRANSCRIPTS (AUTHOR, DDATE, URL, HEADER, SECTION, FILENAME, TRANSCRIPT)
-                        VALUES('{author}', '{date}', '{url}', '{header}', '{section}', '{file}', '{text}')"""
+                        f"""INSERT INTO TRANSCRIPTS 
+                        (AUTHOR, DDATE, URL, HEADER, SECTION, FILENAME, TRANSCRIPT, SOURCE) 
+                        VALUES('{author}', '{date}', '{url}', '{header}', '{section}', '{file}', '{text}', '{9}');"""
                     )
                 except:
                     pass
+
+    def cast_date(self, sql):
+        df = pd.read_sql("SELECT * FROM TRANSCRIPTS WHERE SOURCE = 9", sql.__CONNECTION)
+        df["DDATE"] = pd.to_datetime(df["DDATE"]).dt.tz_localize(None)
+        return df

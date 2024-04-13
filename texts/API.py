@@ -15,7 +15,7 @@ class API(ABC):
 
     def __init__(self, url):
         self._url = url
-        self._basefolder = "./texts/" + self.__class__.__name__.lower()
+        self._basefolder = self.__class__.__name__.lower()
 
     async def get_pages(self, url, file_count):
         rp = RequestProcessing(url, self._basefolder, file_count)
@@ -61,15 +61,13 @@ class API(ABC):
     def parse_html(self, sql: SQL):
         pass
 
-    def clean_text(self, sql):
-        prefix = self._basefolder.upper()
-        res = sql.execute(f"""SELECT * FROM {prefix}_TRANSCRIPTS;""")
-        for row in res:
-            i, author, date, url, header, section, text = row
-            date = pd.to_datetime(date)
-            clean_text = text_cleaner(text)
-            democracy_count = clean_text.count('демократия')
-            sql.execute(
-                f"""INSERT INTO {prefix}_CLEANTEXTS (DDATE, URL, TRANSCRIPT, CLEAN_TEXT, DEMOCRACY_COUNT) 
-                VALUES('{date}', '{url}', '{text}', '{clean_text}', '{democracy_count}');"""
-            )
+    @abstractmethod
+    def cast_date(self, sql: SQL) -> pd.DataFrame:
+        pass
+
+    def clean_text(self, sql: SQL):
+        df = self.cast_date(sql)
+        df0021 = df[(df.DDATE >= "2000-01-01") & (df.DDATE <= "2021-09-17")]
+        df0021["CLEAN_TEXT"] = df0021["TRANSCRIPT"].apply(text_cleaner)
+        df0021["DEMOCRACY_COUNT"] = df0021["CLEAN_TEXT"].apply(lambda text: text.count("демократия"))
+        df0021.to_sql(f"{self.__class__.__name__.upper()}0021", sql.__CONNECTION)

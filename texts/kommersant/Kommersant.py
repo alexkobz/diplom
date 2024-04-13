@@ -19,8 +19,14 @@ class Kommersant(API):
                     section = ''
                     text = soup.find('div', itemprop="articleBody").text.replace('\n', ' ').replace("'", "`").strip() if soup.find('div', itemprop="articleBody") else ''
                     sql.execute(
-                        f"""INSERT INTO KOMMERSANT_TRANSCRIPTS (AUTHOR, DDATE, URL, HEADER, SECTION, FILENAME, TRANSCRIPT)
-                        VALUES('{author}', '{date}', '{url}', '{header}', '{section}', '{file}', '{text}')"""
+                        f"""INSERT INTO TRANSCRIPTS 
+                        (AUTHOR, DDATE, URL, HEADER, SECTION, FILENAME, TRANSCRIPT, SOURCE) 
+                        VALUES('{author}', '{date}', '{url}', '{header}', '{section}', '{file}', '{text}', '{4}');"""
                     )
                 except:
                     pass
+
+    def cast_date(self, sql):
+        df = pd.read_sql("SELECT * FROM TRANSCRIPTS WHERE SOURCE = 4", sql.__CONNECTION)
+        df["DDATE"] = pd.to_datetime(df["DDATE"]).dt.tz_localize(None)
+        return df

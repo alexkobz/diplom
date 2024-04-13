@@ -38,13 +38,22 @@ class GosDuma(API):
                 try:
                     html = f.read()
                     soup = BeautifulSoup(html)
+                    author = ''
+                    date = soup.find('head').find('title').text.replace("'", "`")
                     url = self._url + str(file).replace(".html", "")
-                    header = soup.find('head').find('title').text.replace("'", "`")
+                    header = ''
+                    section = ''
                     text = "\n".join([str(i).replace('<p>', '').replace('</p>', '').replace("'", "`")
                                       for i in soup.find(id='selectable-content').findAll('p')])
                     sql.execute(
-                        f"""INSERT INTO GD_TRANSCRIPTS (HEADER, URL, TRANSCRIPT)
-                        VALUES('{header}','{url}', '{text}')"""
+                        f"""INSERT INTO TRANSCRIPTS 
+                        (AUTHOR, DDATE, URL, HEADER, SECTION, FILENAME, TRANSCRIPT, SOURCE) 
+                        VALUES('{author}', '{date}', '{url}', '{header}', '{section}', '{file}', '{text}', '{2}');"""
                     )
                 except:
                     pass
+
+    def cast_date(self, sql):
+        df = pd.read_sql("SELECT * FROM TRANSCRIPTS WHERE SOURCE = 2", sql.__CONNECTION)
+        df["DDATE"] = pd.to_datetime(df["DDATE"]).dt.tz_localize(None)
+        return df

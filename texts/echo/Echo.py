@@ -31,9 +31,15 @@ class Echo(API):
                 try:
                     html = f.read()
                     soup = BeautifulSoup(html)
-                    sql.execute("""SELECT 1;"""
-                        # f"""INSERT INTO ECHO_TRANSCRIPTS (HEADER, URL, TRANSCRIPT)
-                        # VALUES('{header}','{url}', '{text}')"""
-                    )
+                    # sql.execute(
+                    #     f"""INSERT INTO TRANSCRIPTS
+                    #     (AUTHOR, DDATE, URL, HEADER, SECTION, FILENAME, TRANSCRIPT, SOURCE)
+                    #     VALUES('{author}', '{date}', '{url}', '{header}', '{section}', '{file}', '{text}', '{1}');"""
+                    # )
                 except:
                     pass
+
+    def cast_date(self, sql):
+        df = pd.read_sql("SELECT * FROM TRANSCRIPTS WHERE SOURCE = 1", sql.__CONNECTION)
+        df["DDATE"] = pd.to_datetime(df["DDATE"]).dt.tz_localize(None)
+        return df
