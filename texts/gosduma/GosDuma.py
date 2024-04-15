@@ -2,6 +2,7 @@
 # This Python file uses the following encoding: utf-8
 import asyncio
 import os
+import pandas as pd
 from bs4 import BeautifulSoup
 from texts.API import API
 from sql.SQL import SQL

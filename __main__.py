@@ -7,18 +7,19 @@ transcripts of the State Duma, articles in Kommersant, Izvestia, Vedomosti, the 
 the Independent newspaper, Zavtra, transcripts of Echo of Moscow
 
 Analysis in .ipynb in texts/*
-
-Date created: 2024-04-11
 """
 
 __author__ = "Alexander Kobzar"
 __contact__ = "alexanderkobzarrr@gmail.com"
-__date__ = "2024-04-11"
+__github__ = "alexkobz"
 __maintainer__ = "developer"
+__created__ = "2024-04-11"
+__modified__ = "2024-04-14"
 __status__ = "Production"
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 import asyncio
+from texts.president.President import President
 from texts.gosduma.GosDuma import GosDuma
 from texts.izvestia.Izvestia import Izvestia
 from texts.kommersant.Kommersant import Kommersant
@@ -32,6 +33,9 @@ from sql.SQL import SQL
 
 async def main():
 
+    president_transcripts = President('http://www.kremlin.ru/events/president/transcripts/')
+    president_news = President('http://www.kremlin.ru/events/president/news/')
+    gosduma = GosDuma('http://transcript.duma.gov.ru/node/')
     izvestia = Izvestia("https://iz.ru/")
     kommersant = Kommersant("https://www.kommersant.ru/doc/")
     vedomosti_politics = Vedomosti("https://www.vedomosti.ru/politics/articles/")
@@ -40,8 +44,10 @@ async def main():
     ng = NG("https://ng.ru/politics/")
     zavtra = Zavtra("https://zavtra.ru/blogs/")
     mk = MK("https://www.mk.ru/politics/")
-    gosduma = GosDuma('http://transcript.duma.gov.ru/node/')
 
+    president_transcripts.save_urls()
+    president_news.save_urls()
+    gosduma.save_urls()
     izvestia.save_urls()
     kommersant.save_urls()
     vedomosti_politics.save_urls()
@@ -50,27 +56,31 @@ async def main():
     ng.save_urls()
     zavtra.save_urls()
     mk.save_urls()
-    gosduma.save_urls()
 
+    president = president_transcripts or president_news
     vedomosti = vedomosti_politics or vedomosti_opinion
 
+    president_task = asyncio.create_task(president())
+    gosduma_task = asyncio.create_task(gosduma())
     izvestia_task = asyncio.create_task(izvestia())
     kommersant_task = asyncio.create_task(kommersant())
     vedomosti_task = asyncio.create_task(vedomosti())
     ng_task = asyncio.create_task(ng())
     zavtra_task = asyncio.create_task(zavtra())
     mk_task = asyncio.create_task(mk())
-    gosduma_task = asyncio.create_task(gosduma())
 
+    await president_task
+    await gosduma_task
     await izvestia_task
     await kommersant_task
     await vedomosti_task
     await ng_task
     await zavtra_task
     await mk_task
-    await gosduma_task
 
     with SQL() as sql:
+        president.parse_html(sql)
+        president.clean_text(sql)
         gosduma.parse_html(sql)
         gosduma.clean_text(sql)
         izvestia.parse_html(sql)

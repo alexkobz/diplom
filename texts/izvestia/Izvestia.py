@@ -45,6 +45,6 @@ class Izvestia(API):
                     pass
 
     def cast_date(self, sql):
-        df = pd.read_sql("SELECT * FROM TRANSCRIPTS WHERE SOURCE = 3", sql.__CONNECTION)
+        df = pd.read_sql("SELECT * FROM TRANSCRIPTS WHERE SOURCE = 3 AND LENGTH(TRANSCRIPT) > 100;", sql.__CONNECTION)
         df["DDATE"] = pd.to_datetime(df["DDATE"]).dt.tz_localize(None)
         return df
