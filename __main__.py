@@ -28,37 +28,33 @@ from texts.echo.Echo import Echo
 from texts.ng.NG import NG
 from texts.zavtra.Zavtra import Zavtra
 from texts.mk.MK import MK
+from texts.vzglyad.Vzglyad import Vzglyad
 from sql.SQL import SQL
 
 
 async def main():
 
-    president_transcripts = President('http://www.kremlin.ru/events/president/transcripts/')
-    president_news = President('http://www.kremlin.ru/events/president/news/')
+    president = President('http://www.kremlin.ru/events/president/')
     gosduma = GosDuma('http://transcript.duma.gov.ru/node/')
     izvestia = Izvestia("https://iz.ru/")
     kommersant = Kommersant("https://www.kommersant.ru/doc/")
-    vedomosti_politics = Vedomosti("https://www.vedomosti.ru/politics/articles/")
-    vedomosti_opinion = Vedomosti("https://www.vedomosti.ru/opinion/articles/")
+    vedomosti = Vedomosti("https://www.vedomosti.ru/")
     echo = Echo("https://echo.msk.ru/personalno/")
     ng = NG("https://ng.ru/politics/")
     zavtra = Zavtra("https://zavtra.ru/blogs/")
     mk = MK("https://www.mk.ru/politics/")
+    vzglyad = Vzglyad("http://www.vz.ru/opinions/")
 
-    president_transcripts.save_urls()
-    president_news.save_urls()
+    president.save_urls()
     gosduma.save_urls()
     izvestia.save_urls()
     kommersant.save_urls()
-    vedomosti_politics.save_urls()
-    vedomosti_opinion.save_urls()
+    vedomosti.save_urls()
     echo.save_urls()
     ng.save_urls()
     zavtra.save_urls()
     mk.save_urls()
-
-    president = president_transcripts or president_news
-    vedomosti = vedomosti_politics or vedomosti_opinion
+    vzglyad.save_urls()
 
     president_task = asyncio.create_task(president())
     gosduma_task = asyncio.create_task(gosduma())
@@ -68,6 +64,7 @@ async def main():
     ng_task = asyncio.create_task(ng())
     zavtra_task = asyncio.create_task(zavtra())
     mk_task = asyncio.create_task(mk())
+    vzglyad_task = asyncio.create_task(vzglyad())
 
     await president_task
     await gosduma_task
@@ -77,6 +74,7 @@ async def main():
     await ng_task
     await zavtra_task
     await mk_task
+    await vzglyad_task
 
     with SQL() as sql:
         president.parse_html(sql)
@@ -87,8 +85,8 @@ async def main():
         izvestia.clean_text(sql)
         kommersant.parse_html(sql)
         kommersant.clean_text(sql)
-        vedomosti_politics.parse_html(sql)
-        vedomosti_politics.clean_text(sql)
+        vedomosti.parse_html(sql)
+        vedomosti.clean_text(sql)
         echo.parse_html(sql)
         echo.clean_text(sql)
         ng.parse_html(sql)
@@ -97,6 +95,8 @@ async def main():
         zavtra.clean_text(sql)
         mk.parse_html(sql)
         mk.clean_text(sql)
+        vzglyad.parse_html(sql)
+        vzglyad.clean_text(sql)
 
 
 if __name__ == '__main__':

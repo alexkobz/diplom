@@ -13,11 +13,12 @@ class President(API):
     def save_urls(self):
         self.mkdir()
         known_urls = KnownUrls(self._url).get_urls()
-        pattern = re.compile(r'\S+events/president/transcripts/\d+$')
+        pattern_transcripts = re.compile(r'\S+events/president/transcripts/\d+$')
+        pattern_news = re.compile(r'\S+events/president/news/\d+$')
         with open(f'{self._basefolder}\\{self._basefolder}_urls.txt', 'a+') as f:
             for url in known_urls:
                 url = url.replace('%20', '')
-                if pattern.match(url):
+                if pattern_transcripts.match(url) or pattern_news.match(url):
                     f.write(url)
             sleep(1)
 
@@ -27,17 +28,12 @@ class President(API):
                 try:
                     html = f.read()
                     soup = BeautifulSoup(html)
-                    author = soup.find('article')['data-analytics-authors'].replace("'", "`") if soup.find(
-                        'article') else ''
-                    date = soup.find('article')['data-article-daterfc822'].replace("'", "`") if soup.find(
-                        'article') else ''
-                    url = soup.find('article')['data-canonical-url'].replace("'", "`") if soup.find('article') else ''
-                    header = soup.find('article')['data-canonical-title'].replace("'", "`") if soup.find(
-                        'article') else ''
+                    author = ""
+                    date = soup.find(class_="read__published").attrs['datetime']
+                    url = soup.find(property="og:url").attrs['content']
+                    header = soup.find(property="og:title").attrs['content']
                     section = ''
-                    text = soup.find('div', itemprop="articleBody").text.replace('\n', ' ').replace("'",
-                                                                                                    "`").strip() if soup.find(
-                        'div', itemprop="articleBody") else ''
+                    text = soup.find(itemprop="articleBody").text
                     sql.execute(
                         f"""INSERT INTO TRANSCRIPTS 
                         (AUTHOR, DDATE, URL, HEADER, SECTION, FILENAME, TRANSCRIPT, SOURCE) 

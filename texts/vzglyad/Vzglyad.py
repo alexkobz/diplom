@@ -9,18 +9,17 @@ from texts.API import API
 from texts.KnownUrls import KnownUrls
 
 
-class Vedomosti(API):
+class Vzglyad(API):
 
     def save_urls(self):
         self.mkdir()
         known_urls = KnownUrls(self._url).get_urls()
-        pattern_politics = re.compile(r'\S+politics/articles/\d{4}/\d{2}/\d{2}/\S+$')
-        pattern_opinion = re.compile(r'\S+politics/opinion/\d{4}/\d{2}/\d{2}/\S+$')
+        pattern = re.compile(r'\S+opinions/\d{4}/\d+/\d+/\d+.html$')
         with open(f'{self._basefolder}\\{self._basefolder}_urls.txt', 'a+') as f:
             for url in known_urls:
-                url = url.replace('%20', '')
-                if pattern_politics.match(url) or pattern_opinion.match(url):
-                    f.write(url)
+                url = url.replace('%20', '').replace('\n', '')
+                if pattern.match(url):
+                    f.write(url + '\n')
             sleep(1)
 
     def parse_html(self, sql):
@@ -59,6 +58,6 @@ class Vedomosti(API):
                     pass
 
     def cast_date(self, sql):
-        df = pd.read_sql("SELECT * FROM TRANSCRIPTS WHERE SOURCE = 8", sql.__CONNECTION)
+        df = pd.read_sql("SELECT * FROM TRANSCRIPTS WHERE SOURCE = 10", sql.__CONNECTION)
         df["DDATE"] = pd.to_datetime(df["DDATE"]).dt.tz_localize(None)
         return df
