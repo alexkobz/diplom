@@ -28,31 +28,18 @@ class Vzglyad(API):
                 try:
                     html = f.read()
                     soup = BeautifulSoup(html)
-                    try:
-                        author = json.loads(soup.find(type="application/ld+json").text)['author'][0]['name']\
-                            .replace("'", '`')
-                    except:
-                        pass
-                    date = json.loads(soup.find(type="application/ld+json").text)['datePublished']\
-                        .replace("'", '`') if soup.find(type="application/ld+json") else ''
-                    url = json.loads(soup.find(type="application/ld+json").text)['url']\
-                        .replace("'", '`') if soup.find(type="application/ld+json") else ''
-                    try:
-                        header = json.loads(soup.find(type="application/ld+json").text)['description'].replace("'", '`')
-                    except:
-                        header = ''
-                    try:
-                        section = json.loads(soup.find(type="application/ld+json").text)['articleSection']\
-                            .replace("'", '`')
-                    except:
-                        section = ''
-                    text = ''
-                    for i in soup.findAll(class_="box-paragraph__text"):
-                        text += i.text.strip().replace("'", '.') + '\n'
+                    author = soup.find(class_="author").img.attrs['title'].replace("'", '`') if soup.find(
+                        class_="author") else ''
+                    date = soup.find(class_="header").span.text if soup.find(class_="header") else ''
+                    url = soup.find(property="og:url").attrs['content'].replace("'", '`') if soup.find(
+                        property="og:url") else ''
+                    header = soup.find(property="og:title").attrs['content'].replace("'", '`')
+                    section = soup.find(property="og:type").attrs['content'].replace("'", '`')
+                    text = soup.find(class_="news_text").text
                     sql.execute(
                         f"""INSERT INTO TRANSCRIPTS 
                         (AUTHOR, DDATE, URL, HEADER, SECTION, FILENAME, TRANSCRIPT, SOURCE) 
-                        VALUES('{author}', '{date}', '{url}', '{header}', '{section}', '{file}', '{text}', '{8}');"""
+                        VALUES('{author}', '{date}', '{url}', '{header}', '{section}', '{file}', '{text}', '{10}');"""
                     )
                 except:
                     pass
