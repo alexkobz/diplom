@@ -24,12 +24,11 @@ class Vzglyad(API):
 
     def parse_html(self, sql):
         for file in self.filename():
-            with (open(file, encoding='utf-8') as f):
+            with open(file, encoding='utf-8') as f:
                 try:
                     html = f.read()
                     soup = BeautifulSoup(html)
-                    author = soup.find(class_="author").img.attrs['title'].replace("'", '`') if soup.find(
-                        class_="author") else ''
+                    author = soup.find(class_="author").a.text.replace("'", '`') if soup.find(class_="author") else ''
                     date = soup.find(class_="header").span.text if soup.find(class_="header") else ''
                     url = soup.find(property="og:url").attrs['content'].replace("'", '`') if soup.find(
                         property="og:url") else ''
@@ -45,6 +44,12 @@ class Vzglyad(API):
                     pass
 
     def cast_date(self, sql):
+        def date_replace(d):
+            return d.replace("января", "01").replace("февраля", "02").replace("марта", "03").replace("апреля", "04")\
+            .replace("мая", "05").replace("июня", "06").replace("июля", "07").replace("августа", "08")\
+            .replace("сентября", "09").replace("октября", "10").replace("ноября", "11").replace("декабря", "12")
+        
         df = pd.read_sql("SELECT * FROM TRANSCRIPTS WHERE SOURCE = 10", sql.__CONNECTION)
-        df["DDATE"] = pd.to_datetime(df["DDATE"]).dt.tz_localize(None)
+        df["DDATE"] = df["DDATE"].apply(date_replace)
+        df["DDATE"] = pd.to_datetime(df["DDATE"], format='%d %m %Y, %H:%S')
         return df

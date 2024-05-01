@@ -29,6 +29,12 @@ class Zavtra(API):
                     pass
 
     def cast_date(self, sql):
+        def date_replace(d):
+            return d.replace("января", "01").replace("февраля", "02").replace("марта", "03").replace("апреля", "04")\
+            .replace("мая", "05").replace("июня", "06").replace("июля", "07").replace("августа", "08")\
+            .replace("сентября", "09").replace("октября", "10").replace("ноября", "11").replace("декабря", "12")
+            
         df = pd.read_sql("SELECT * FROM TRANSCRIPTS WHERE SOURCE = 9", sql.__CONNECTION)
-        df["DDATE"] = pd.to_datetime(df["DDATE"]).dt.tz_localize(None)
+        df["DDATE"] = df["DDATE"].apply(date_replace)
+        df["DDATE"] = pd.to_datetime(df["DDATE"], format='%d %m %Y')
         return df
