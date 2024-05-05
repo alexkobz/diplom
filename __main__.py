@@ -3,8 +3,8 @@
 """
 Python file for scrapping texts:
 speeches of presidents Putin and Medvedev (source - kremlin.ru),
-transcripts of the State Duma, articles in Kommersant, Izvestia, Vedomosti, the Muscovite komsomolets,
-the Independent newspaper, Zavtra, transcripts of Echo of Moscow
+transcripts of the State Duma, articles in Kommersant, Izvestia, Vedomosti,
+the Independent newspaper, Vzglyad, Zavtra, transcripts of Echo of Moscow
 
 Analysis in .ipynb in texts/*
 """
@@ -16,7 +16,7 @@ __maintainer__ = "developer"
 __created__ = "2024-04-11"
 __modified__ = "2024-04-14"
 __status__ = "Production"
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 
 import asyncio
 from texts.president.President import President
@@ -27,7 +27,6 @@ from texts.vedomosti.Vedomosti import Vedomosti
 from texts.echo.Echo import Echo
 from texts.ng.NG import NG
 from texts.zavtra.Zavtra import Zavtra
-from texts.mk.MK import MK
 from texts.vzglyad.Vzglyad import Vzglyad
 from sql.SQL import SQL
 
@@ -42,7 +41,6 @@ async def main():
     echo = Echo("https://echo.msk.ru/personalno/")
     ng = NG("https://ng.ru/politics/")
     zavtra = Zavtra("https://zavtra.ru/blogs/")
-    mk = MK("https://www.mk.ru/politics/")
     vzglyad = Vzglyad("http://www.vz.ru/opinions/")
 
     president.save_urls()
@@ -53,7 +51,6 @@ async def main():
     echo.save_urls()
     ng.save_urls()
     zavtra.save_urls()
-    mk.save_urls()
     vzglyad.save_urls()
 
     president_task = asyncio.create_task(president())
@@ -63,7 +60,6 @@ async def main():
     vedomosti_task = asyncio.create_task(vedomosti())
     ng_task = asyncio.create_task(ng())
     zavtra_task = asyncio.create_task(zavtra())
-    mk_task = asyncio.create_task(mk())
     vzglyad_task = asyncio.create_task(vzglyad())
 
     await president_task
@@ -73,7 +69,6 @@ async def main():
     await vedomosti_task
     await ng_task
     await zavtra_task
-    await mk_task
     await vzglyad_task
 
     with SQL() as sql:
@@ -93,8 +88,6 @@ async def main():
         ng.clean_text(sql)
         zavtra.parse_html(sql)
         zavtra.clean_text(sql)
-        mk.parse_html(sql)
-        mk.clean_text(sql)
         vzglyad.parse_html(sql)
         vzglyad.clean_text(sql)
 
